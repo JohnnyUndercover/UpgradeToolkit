@@ -1,7 +1,3 @@
-/// <summary>
-/// Provides the same functionality as the DataTransfer type,
-/// if run outside of install or upgrade execution context RecordRef and FieldRef are used to transfer the data instead od DataTransfer
-/// </summary>
 codeunit 50100 "DataTransfer Helper"
 {
     Access = Internal;

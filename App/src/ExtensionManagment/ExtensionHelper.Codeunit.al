@@ -1,6 +1,10 @@
 codeunit 50101 "Extension Helper"
 {
+    Access = Internal;
+    InherentEntitlements = X;
+    InherentPermissions = X;
 
+    #region external procedures
     /// <summary>
     /// ReInstalls an extension.
     /// Uninstalls the extension and all dependent extensions and then installs it again.
@@ -9,7 +13,7 @@ codeunit 50101 "Extension Helper"
     /// <param name="lcid">The Locale Identifier.</param>
     /// <param name="IsUIEnabled">Indicates if the reinstall operation is invoked through the UI.</param>
     /// <returns>True if the operation was successful and false otherwise.</returns>
-    procedure ReinstallExtension(PackageId: Guid; lcid: Integer; IsUIEnabled: Boolean): Boolean
+    internal procedure ReinstallExtension(PackageId: Guid; lcid: Integer; IsUIEnabled: Boolean): Boolean
     var
         ExtensionManagement: Codeunit "Extension Management";
         DependentModules: List of [ModuleInfo];
@@ -32,18 +36,7 @@ codeunit 50101 "Extension Helper"
         exit(Success);
     end;
 
-    local procedure GetDependentModulesForExtensionToReinstall(PackageId: Guid): List of [ModuleInfo]
-    var
-        NAVAppInstalledApp: Record "NAV App Installed App";
-        App: ModuleInfo;
-    begin
-        NAVAppInstalledApp.SetRange("Package ID", PackageId);
-        NAVAppInstalledApp.FindFirst();
-        NavApp.GetModuleInfo(NAVAppInstalledApp."App ID", App);
-        exit(GetDependentApps(App));
-    end;
-
-    local procedure LoadAppDependencies(): Dictionary of [ModuleInfo, List of [ModuleInfo]]
+    internal procedure GetDependentAppsForAllInstalledApps(): Dictionary of [ModuleInfo, List of [ModuleInfo]]
     var
         NAVAppInstalledApp: Record "NAV App Installed App";
         DependentApps: List of [ModuleInfo];
@@ -60,6 +53,20 @@ codeunit 50101 "Extension Helper"
         until NAVAppInstalledApp.Next() = 0;
         exit(AppDependencies);
     end;
+    #endregion external procedures
+
+    local procedure GetDependentModulesForExtensionToReinstall(PackageId: Guid): List of [ModuleInfo]
+    var
+        NAVAppInstalledApp: Record "NAV App Installed App";
+        App: ModuleInfo;
+    begin
+        NAVAppInstalledApp.SetRange("Package ID", PackageId);
+        NAVAppInstalledApp.FindFirst();
+        NavApp.GetModuleInfo(NAVAppInstalledApp."App ID", App);
+        exit(GetDependentApps(App));
+    end;
+
+
 
     local procedure GetDependentApps(App: ModuleInfo): List of [ModuleInfo]
     var
