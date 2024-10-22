@@ -200,7 +200,7 @@ codeunit 50100 "DataTransfer Helper"
                     ApplyJoin(SourceRecRef, DestRecRef);
                     if DestRecRef.Count() > 1 then
                         Error(JoinNotUnqiueErr);
-
+                    DestRecRef.FindFirst();
                     CopyFieldValues(SourceRecRef, DestRecRef);
                     CopyConstantValues(DestRecRef);
                     DestRecRef.Modify(false);
